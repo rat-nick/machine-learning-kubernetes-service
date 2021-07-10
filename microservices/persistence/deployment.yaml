@@ -6,12 +6,16 @@ spec:
   selector:
     matchLabels:
       app: persistence
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         app: persistence
     spec:
+      volumes:
+      - name: model-persistance
+        persistentVolumeClaim:
+          claimName: model-pvc
       containers:
         - name: persistence
           image: "ratinacnikola/persistence-msvc:v0.1"
