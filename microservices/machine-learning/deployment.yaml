@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: machine-learning
+spec:
+  selector:
+    matchLabels:
+      app: machine-learning
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: machine-learning
+    spec:
+      containers:
+        - name: machine-learning
+          image: "ratinacnikola/machine-learning-msvc:v0.1"
+          ports:
+            - name: http
+              containerPort: 5000
