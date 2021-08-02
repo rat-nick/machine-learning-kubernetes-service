@@ -18,7 +18,7 @@ spec:
           claimName: model-pvc
       containers:
         - name: persistence
-          image: "ratinacnikola/persistence-msvc:v0.2"
+          image: "ratinacnikola/persistence-msvc:v0.1"
           ports:
             - name: http
               containerPort: 5000

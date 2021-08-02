@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ml-service
+  name: machine-learning
+  labels:
+    app: machine-learning
 spec:
   selector:
     app: machine-learning
   ports:
     - protocol: TCP
       port: 8080
-      targetPort: 5000
-  type: NodePort
-  
+      name: http
+      targetPort: 8080
+  type: LoadBalancer

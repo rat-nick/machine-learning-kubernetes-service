@@ -2,9 +2,10 @@ from scipy.sparse import data
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
-from persistence_interface import load, save
+from persistence_interface import load, load_all, save
 from flask import Flask
 from flask import request
+from flask import jsonify
 import io
 import pandas as pd
 
@@ -41,12 +42,16 @@ def train_model():
     accuracy = accuracy_score(y_test, model.predict(X_test))
     auc = roc_auc_score(y_test, model.predict(X_test))
     
-    
-    save(model, accuracy, auc)
+    res = save(model, accuracy, auc)
+    print(res)
+    return res
 
 def feature_label_split(df):
     return df.iloc[:, :-1], df.iloc[:, -1]
-    
+
+@app.route("/models", methods=['GET'])    
+def all_models():
+    return load_all() 
     
 @app.route("/<model_id>")        
 def predict_value(model_id, predictors):
@@ -57,4 +62,4 @@ def predict_value(model_id, predictors):
     }
     
 if __name__ == "__main__":
-   app.run(host='0.0.0.0')
+   app.run(host='0.0.0.0', debug=True, port=8080)

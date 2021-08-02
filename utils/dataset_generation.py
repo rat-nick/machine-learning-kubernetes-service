@@ -3,7 +3,7 @@ from sklearn.datasets import make_blobs, make_classification
 import numpy as np
 import csv
 
-X, y = make_classification(1000)
+X, y = make_classification(100)
 
 data = [tuple(x) + (y,) for x, y in zip(X,y)]
 

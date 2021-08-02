@@ -1,9 +1,15 @@
 import requests
 
 def load(model_id):
-    response = requests.get("persistence-service/" + model_id)
-    print(response)
-    return response['model']
+    res = requests.get("http://persistence:5000/" + model_id)
+    #print(res)
+    return res.content
+
+def load_all():
+    res = requests.get("http://persistence:5000/models")
+    #print(res)
+    return res.content
+
 
 def save(model, accuracy, auc):
     data = {
@@ -11,5 +17,6 @@ def save(model, accuracy, auc):
         "accuracy" : accuracy,
         "auc" : auc
     }
-    res = requests.post("persistence-service/", data = data)
-    return res
+    res = requests.post("http://persistence:5000/", data=data)
+    #print(res)
+    return res.content
