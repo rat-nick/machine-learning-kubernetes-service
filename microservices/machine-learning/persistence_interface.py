@@ -1,22 +1,29 @@
+import pickle
 import requests
-
+import inspect
 def load(model_id):
-    res = requests.get("http://192.168.0.14:5000/" + model_id)
-    #print(res)
-    return res.content
+    res = requests.get("http://localhost:5000/" + model_id)
+    res.headers["Access-Control-Allow-Origin"] = "*"
+    return pickle.loads(res.content)
 
 def load_all():
-    res = requests.get("http://192.168.0.14:5000/models")
+    res = requests.get("http://localhost:5000/models")
     #print(res)
-    return res.content
+    res.headers["Access-Control-Allow-Origin"] = "*"
+    return res
 
 
 def save(model, accuracy, auc):
-    data = {
-        "model" : model,
+    data = pickle.dumps(model)
+    
+    params = {
+        "modelType": str(model).split('(')[0],
+        #"hyperparameters": inspect.getfullargspec(model.__init__),
         "accuracy" : accuracy,
         "auc" : auc
     }
-    res = requests.post("http://192.168.0.14:5000/", data=data)
+    
+    res = requests.post("http://localhost:5000/", data=data, params=params)
     #print(res)
-    return res.content
+    res.headers["Access-Control-Allow-Origin"] = "*"
+    return res

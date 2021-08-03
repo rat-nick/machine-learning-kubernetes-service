@@ -7,7 +7,7 @@ X, y = make_classification(100)
 
 data = [tuple(x) + (y,) for x, y in zip(X,y)]
 
-with open('data.csv', 'w') as f:
+with open('test.csv', 'w') as f:
     writer = csv.writer(f , lineterminator='\n')
     for tup in data:
         writer.writerow(tup)
