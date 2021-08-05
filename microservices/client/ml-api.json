@@ -1,0 +1,185 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ML API",
+    "description": "Model training, persistance and prediction",
+    "contact": {
+      "name": "ML API",
+      "url": "http://mlapi.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    },
+    {
+      "url": "http://192.168.49.2:30028"
+    }
+  ],
+  "paths": {
+    "/model/": {
+      "description": "Model Resource",
+      "get": {
+        "description": "Operation to fetch all models",
+        "responses": {
+          "200": {
+            "description": "Success Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "example": "41ffb018-f455-11eb-98e4-c9e4dd6de644"
+                      },
+                      "modelType": {
+                        "type": "string",
+                        "example": "MLPClassifier"
+                      },
+                      "accuracy": {
+                        "type": "number",
+                        "example": 0.89
+                      },
+                      "auc": {
+                        "type": "number",
+                        "example": 0.91
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/train/": {
+      "description": "Provides training functionality",
+      "post": {
+        "summary": "Train a new model",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "training_data": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "activation",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "relu",
+                "tanh",
+                "identity",
+                "logistic"
+              ],
+              "default": "relu"
+            }
+          },
+          {
+            "in": "query",
+            "name": "solver",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "adam",
+                "sgd",
+                "lbfgs"
+              ],
+              "default": "adam"
+            }
+          },
+          {
+            "in": "query",
+            "name": "alpha",
+            "schema": {
+              "type": "number",
+              "minimum": 1e-13,
+              "default": 0.0001
+            }
+          },
+          {
+            "in": "query",
+            "name": "learning_rate",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "constant",
+                "invscaling",
+                "adaptive"
+              ],
+              "default": "constant"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hidden_layer_sizes",
+            "description": "Sizes of hidden layer, send as tuple",
+            "example": "(15, 100, 100)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Training"
+          }
+        }
+      }
+    },
+    "/predict/": {
+      "description": "Get Model Prediction",
+      "get": {
+        "summary": "Get prediction of model with said ID for said predictors",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "modelID",
+            "schema": {
+              "type": "string",
+              "example": "c81cc8c2-f48a-11eb-9d16-878e7a5b63b0"
+            }
+          },
+          {
+            "in": "query",
+            "name": "predictors",
+            "schema": {
+              "type": "string"
+            },
+            "description": "array of feature values"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

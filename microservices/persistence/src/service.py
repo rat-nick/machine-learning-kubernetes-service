@@ -1,5 +1,4 @@
 import pickle
-import re
 import uuid
 from flask import Flask
 from flask import request
@@ -8,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-
+data_dir = "./data/"
 
 @app.route("/", methods=['POST'])
 def save():
@@ -21,10 +20,10 @@ def save():
     #hp = request.args['hyperparameters']
     data = (model, model_type, accuracy, auc)
 
-    with open(key+".pkl", 'wb') as f:
+    with open(data_dir+key+".pkl", 'wb') as f:
         pickle.dump(data, f)
         
-    with open(key+".pkl", 'rb') as f:
+    with open(data_dir+key+".pkl", 'rb') as f:
         model, _, __, ___ = pickle.load(f)
     
     return jsonify({
@@ -39,7 +38,7 @@ def save():
 @app.route("/<model_id>", methods=['GET'])
 def load(model_id):
     
-    with open(model_id+".pkl", 'rb') as f:
+    with open(data_dir+model_id+".pkl", 'rb') as f:
         model, model_type, accuracy, auc = pickle.load(f)
 
     return model
@@ -48,9 +47,9 @@ def load(model_id):
 def load_all():
     
     res = []
-    for file in os.listdir("./"):
+    for file in os.listdir(data_dir):
         if file.endswith(".pkl"):
-            with open(file, "rb") as f:
+            with open(data_dir+file, "rb") as f:
                 model, model_type, accuracy, auc = pickle.load(f)
                 res.append({
                     'key' : file[:-4],

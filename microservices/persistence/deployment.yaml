@@ -13,12 +13,16 @@ spec:
         app: persistence
     spec:
       volumes:
-      - name: model-persistance
+      - name: model-data
         persistentVolumeClaim:
           claimName: model-pvc
       containers:
         - name: persistence
-          image: "ratinacnikola/persistence-msvc:v0.1"
+          image: "ratinacnikola/persistence-msvc:v1.0"
+          volumeMounts:
+            - 
+              mountPath: /app/data/
+              name: model-data
           ports:
             - name: http
               containerPort: 5000
