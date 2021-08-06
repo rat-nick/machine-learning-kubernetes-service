@@ -4,8 +4,8 @@
     "title": "ML API",
     "description": "Model training, persistance and prediction",
     "contact": {
-      "name": "ML API",
-      "url": "http://mlapi.com"
+      "name": "ML API DOCS",
+      "url": "https://github.com/ratinac-nikola/machine-learning-kubernetes-service"
     },
     "version": "1.0.0"
   },

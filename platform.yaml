@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: machine-learning
+spec:
+  selector:
+    matchLabels:
+      app: machine-learning
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: machine-learning
+    spec:
+      containers:
+        - name: machine-learning
+          image: "ratinacnikola/machine-learning-msvc:v1.0"
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: machine-learning
+  labels:
+    app: machine-learning
+spec:
+  selector:
+    app: machine-learning
+  ports:
+    - protocol: TCP
+      port: 8080
+      name: http
+      targetPort: 8080
+      nodePort: 30028
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: persistence
+spec:
+  selector:
+    matchLabels:
+      app: persistence
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: persistence
+    spec:
+      volumes:
+      - name: model-data
+        persistentVolumeClaim:
+          claimName: model-pvc
+      containers:
+        - name: persistence
+          image: "ratinacnikola/persistence-msvc:v1.0"
+          volumeMounts:
+            - 
+              mountPath: /app/data/
+              name: model-data
+          ports:
+            - name: http
+              containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: persistence
+  labels:
+    app: persistence
+spec:
+  selector:
+    app: persistence
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: NodePort
+---
+apiVersion: v1  
+kind: PersistentVolume
+metadata:
+  name: model-data
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1  
+kind: Deployment
+metadata:
+  name: ml-client
+spec:
+  selector:
+    matchLabels:
+      app: ml-client
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: ml-client
+    spec:
+      containers:
+        - name: ml-client
+          image: "ratinacnikola/ml-client-msvc:v1.0"
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1  
+kind: Service
+metadata:
+  name: web-client
+  labels:
+    app: web-client
+spec:
+  selector:
+    app: ml-client
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 8080
+      nodePort: 30080
+  type: LoadBalancer

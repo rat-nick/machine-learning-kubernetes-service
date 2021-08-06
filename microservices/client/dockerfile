@@ -1,0 +1,6 @@
+FROM swaggerapi/swagger-ui
+
+COPY ml-api.json /app/ml-api.json
+
+ENV SWAGGER_JSON "/app/ml-api.json"
+
