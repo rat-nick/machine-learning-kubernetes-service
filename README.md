@@ -6,4 +6,4 @@
 kubectl apply -f platform.yaml
 ```
 
-Access the web-client at `http://your-cluster-ip:30080` 
+Access the web-client at `http://<your-cluster-ip>:30080` 
